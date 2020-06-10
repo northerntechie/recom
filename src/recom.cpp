@@ -1,5 +1,5 @@
 /**
- * stripper utility to strip code files of comments or other
+ * recom (Remove Comments) utility to strip code files of comments or other
  * unwanted syntax.  Uses docopts as a dependency.
  *
  * Author: Todd Saharchuk
@@ -15,7 +15,7 @@
 #include <iostream>
 #include "docopt/docopt.h"
 
-constexpr auto VERSION = "stripper 0.1.0 (c) Todd Saharchuk, 2020.";
+constexpr auto VERSION = "recom 0.1.0";
 constexpr auto USAGE = 
 R"(stripper.
 
