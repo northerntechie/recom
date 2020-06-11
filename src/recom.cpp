@@ -66,27 +66,40 @@ std::size_t endCommentPos(const std::string& str) {
     return pos;
 }
 
-std::optional<std::string> removeComment(const std::string str)
+std::optional<std::string> removeComment(const std::string str, bool& comment)
 {
     std::string out;
     std::string trimmedStr = ltrim(str);
 
-    // Algorithm assumes either /*...*/ or <!--...--> exlusively
-    if(trimmedStr.find("#") == 0) return {};
-    if(trimmedStr.find("--") == 0) return {};
-    
-    auto start = startCommentPos(str);
-    auto end = endCommentPos(str);
-    if(end > start) {
-        return {};
+    if(comment) {
+        if(trimmedStr.find("*/") != std::string::npos &&
+           trimmedStr.find("-->") != std::string::npos) {
+            comment = false;
+            return {};
+        }
     }
-    else if(start != std::string::npos) {
-        return str.substr(0,str.size()-start);
+    else {
+        // Algorithm assumes either /*...*/ or <!--...--> exlusively
+        if(trimmedStr.find("#") == 0) return {};
+        if(trimmedStr.find("--") == 0) return {};
+        
+        auto start = startCommentPos(str);
+        auto end = endCommentPos(str);
+        if(std::size_t pos = str.find("//") != std::string::npos) {
+            return str.substr(0,str.size()-pos);
+        }
+        else if(end > start) {
+            return {};
+        }
+        else if(start != std::string::npos) {
+            return str.substr(0,str.size()-start);
+        }
+        else
+            return str;
     }
-    else
-        return str;
 }
 
+#ifndef __XUNIT_TESTS_ENABLED
 int main(int argc, char** argv)
 {
     std::map<std::string, docopt::value> args =
@@ -105,15 +118,9 @@ int main(int argc, char** argv)
     std::vector<std::string> stck;
     bool comment = false;
     while(std::getline(inFile,line)) {
-        auto outLine = removeComment(line);
+        auto outLine = removeComment(line,comment);
         if(outLine != std::nullopt) {
-            if(outLine.value().length() != line.length()) {
-                outFile << outLine.value() << '\n';
-                comment = true;
-            }
-            else if(!comment) {
-                outFile << outLine.value() << '\n';
-            }
+            outFile << outLine.value() << '\n';
         }
     }
              
@@ -121,4 +128,4 @@ int main(int argc, char** argv)
 
     return EXIT_SUCCESS;
 }
-
+#endif
