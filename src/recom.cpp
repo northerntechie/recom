@@ -17,10 +17,10 @@
 
 constexpr auto VERSION = "recom 0.1.0";
 constexpr auto USAGE = 
-R"(stripper.
+R"(recom.
 
      Usage:
-       stripper [options] INFILE OUTFILE
+       recom [options] INFILE OUTFILE
 
        Read INFILE, strip comments and other syntax object as determined
          by options and write to OUTFILE.
